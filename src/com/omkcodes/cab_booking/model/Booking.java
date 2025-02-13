@@ -1,5 +1,4 @@
 package com.omkcodes.cab_booking.model;
-
 import com.omkcodes.cab_booking.enums.BookingStatus;
 
 public class Booking {

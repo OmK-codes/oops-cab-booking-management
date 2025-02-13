@@ -1,12 +1,10 @@
 package com.omkcodes.cab_booking.service;
-
+import com.omkcodes.cab_booking.exception.InvalidPassengerIDException;
 import com.omkcodes.cab_booking.enums.PassengerStatus;
 import com.omkcodes.cab_booking.model.Passenger;
-
 import java.util.HashMap;
 
 public class PassengerService {
-
     private final HashMap<String, Passenger> passengerList = new HashMap<>();
     public void displayPassengerDetails(Passenger passenger) {
         if (passenger != null) {
@@ -15,7 +13,15 @@ public class PassengerService {
             System.out.println("Passenger details are not available.");
         }
     }
-    public Passenger createNewPassenger() {
+    public Passenger createNewPassenger(String passengerId, String passengerName,
+                                        String email, String phone,
+                                        String address, String statusInput) throws InvalidPassengerIDException {
+        if (passengerId == null || passengerId.trim().isEmpty()) {
+            throw new InvalidPassengerIDException("Passenger ID cannot be null or empty.");
+        }
+        if (passengerList.containsKey(passengerId)) {
+            throw new InvalidPassengerIDException("Passenger ID already exists. Please use a unique ID.");
+        }
         Passenger passenger = new Passenger();
         PassengerStatus passengerStatus = PassengerStatus.ACTIVE;
         try {
@@ -30,7 +36,6 @@ public class PassengerService {
         passenger.setAddress(address);
         passenger.setPassengerStatus(passengerStatus);
         passengerList.put(passenger.getPassengerId(), passenger);
-
         return passenger;
     }
     public void showAllPassengers() {

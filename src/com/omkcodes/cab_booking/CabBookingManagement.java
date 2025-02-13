@@ -1,121 +1,62 @@
 package com.omkcodes.cab_booking;
-
-import com.omkcodes.cab_booking.model.Booking;
-import com.omkcodes.cab_booking.model.Driver;
-import com.omkcodes.cab_booking.model.Passenger;
-import com.omkcodes.cab_booking.model.Vehicle;
-import com.omkcodes.cab_booking.service.BookingService;
+import com.omkcodes.cab_booking.controller.DriverController;
+import com.omkcodes.cab_booking.controller.PassengerController;
+import com.omkcodes.cab_booking.controller.VehicleController;
+import com.omkcodes.cab_booking.controller.BookingController;
 import com.omkcodes.cab_booking.service.DriverService;
 import com.omkcodes.cab_booking.service.PassengerService;
 import com.omkcodes.cab_booking.service.VehicleService;
+import com.omkcodes.cab_booking.service.BookingService;
 import java.util.Scanner;
 
 public class CabBookingManagement {
-    static Scanner sc = new Scanner(System.in);
-
     public static void main(String[] args) {
-        int option = 0;
+        Scanner scanner = new Scanner(System.in);
         DriverService driverService = new DriverService();
         PassengerService passengerService = new PassengerService();
         VehicleService vehicleService = new VehicleService();
         BookingService bookingService = new BookingService();
 
+        // Initialized controllers here instead of initialization in every controller class
+        DriverController driverController = new DriverController(scanner, driverService);
+        PassengerController passengerController = new PassengerController(scanner, passengerService);
+        VehicleController vehicleController = new VehicleController(scanner, vehicleService);
+        BookingController bookingController = new BookingController();
+        int mainOption = 0;
         do {
-            System.out.println("\n--- Cab Booking Management System ---");
-            System.out.println("1. Create Passenger");
-            System.out.println("2. Create Driver");
-            System.out.println("3. Create Vehicle");
-            System.out.println("4. Create Booking");
-            System.out.println("5. Show All Passengers");
-            System.out.println("6. Show All Drivers");
-            System.out.println("7. Show All Vehicles");
-            System.out.println("8. Show All Bookings");
+            System.out.println("\n--- Main Menu ---");
+            System.out.println("1. Manage Drivers");
+            System.out.println("2. Manage Passengers");
+            System.out.println("3. Manage Vehicles");
+            System.out.println("4. Manage Bookings");
             System.out.println("0. Exit");
             System.out.print("Select an option: ");
-
             try {
-                option = Integer.parseInt(sc.nextLine());
+                mainOption = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a number.");
+                System.out.println("Invalid input! Please enter a valid number.");
                 continue;
             }
-
-            switch (option) {
+            switch (mainOption) { // here called every controller
                 case 1:
-                    Passenger passenger = passengerService.createNewPassenger();
-                    System.out.println("Passenger created: " + passenger);
+                    driverController.run();
                     break;
-
                 case 2:
-                    Driver driver = driverService.createNewDriver();
-                    System.out.println("Driver created: " + driver);
+                    passengerController.run();
                     break;
-
                 case 3:
-                    Vehicle vehicle = vehicleService.createNewVehicle();
-                    System.out.println("Vehicle created: " + vehicle);
+                    vehicleController.run();
                     break;
-
                 case 4:
-                    createBooking(driverService, passengerService, vehicleService, bookingService);
+                    bookingController.run();
                     break;
-
-                case 5:
-                    passengerService.showAllPassengers();
-                    break;
-
-                case 6:
-                    driverService.showAllDrivers();
-                    break;
-
-                case 7:
-                    vehicleService.showAllVehicles();
-                    break;
-
-                case 8:
-                    bookingService.showAllBookings();
-                    break;
-
                 case 0:
-                    System.out.println("Thank you for using the system!");
+                    System.out.println("Exiting...");
                     break;
-
                 default:
-                    System.out.println("Invalid choice! Please select a valid option.");
+                    System.out.println("Invalid option, please try again.");
+                    break;
             }
-        } while (option != 0);
-
-        System.out.println("KEEP TRAVELLING!");
-    }
-
-    private static void createBooking(DriverService driverService, PassengerService passengerService, VehicleService vehicleService, BookingService bookingService) {
-        System.out.println("Enter Booking ID:");
-        String bookingId = sc.nextLine();
-        System.out.println("Enter Driver ID:");
-        String driverId = sc.nextLine();
-        System.out.println("Enter Passenger ID:");
-        String passengerId = sc.nextLine();
-        System.out.println("Enter Vehicle ID:");
-        String vehicleId = sc.nextLine();
-
-        if (!driverService.getDriverList().containsKey(driverId)) {
-            System.out.println("Error: Invalid Driver ID.");
-            return;
-        }
-        if (!passengerService.getPassengerList().containsKey(passengerId)) {
-            System.out.println("Error: Invalid Passenger ID.");
-            return;
-        }
-        if (!vehicleService.getVehicleList().containsKey(vehicleId)) {
-            System.out.println("Error: Invalid Vehicle ID.");
-            return;
-        }
-
-        Booking booking = bookingService.createNewBooking();
-        booking.setBookingId(bookingId);
-        booking.setDriverId(driverId);
-        booking.setPassengerId(passengerId);
-        booking.setVehicleId(vehicleId);
-        System.out.println("Booking created: " + booking);
+        } while (mainOption != 0);
     }
 }
